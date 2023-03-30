@@ -42,9 +42,9 @@ The log has the following **JSON** pattern:
 
 Each log is composed by:
 - **UUID**: Identifies the PC univocally. It has 128 bits.
-- **Window Title**: Is the title of the window where the user has typed. It will be encrypted using AES algorithm.
+- **Window Title**: Is the title of the window where the user has typed.
 - **Timestamp of Start**: Indicates when the user started typing in that window.
-- **Logged Text**: Is the set of keys pressed by the user. It will be encrypted using AES algorithm.
+- **Logged Text**: Is the set of keys pressed by the user.
 - **Timestamp of End**: Indicates when the user finished typing in that window.
 - **IP Address**: Is the public IP address. If the PC has no connection, the default value is "Unknown".
 
@@ -52,9 +52,9 @@ For instance:
 ```
 {
    "uuid": "154A9DC6-FF4E-4149-B81C-610AE7BBD151",
-   "window-title": "Whatsapp", (encrypted)
+   "window-title": "Whatsapp",
    "timestamp-start": "2022-01-01 12:05:17",
-   "log-text": "Hi Nicole, happy new year!![ENTER]", (encrypted)
+   "log-text": "Hi Nicole, happy new year!![ENTER]",
    "timestamp-end": "2022-01-01 12:05:41",
    "ip-address": "1.2.3.4"
 }
