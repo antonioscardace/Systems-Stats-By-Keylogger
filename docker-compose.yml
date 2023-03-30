@@ -1,0 +1,178 @@
+version: '3'
+
+services:
+
+  #-----------------------#
+  #     Server Python     #
+  #-----------------------#
+
+  python-server:
+    image: python:3.8-alpine
+    container_name: python-server
+    working_dir: /usr/app/server/
+    restart: on-failure
+    command: sh -c "pip install pycryptodome && python3 -B ./"
+    ports:
+      - 8800:8800
+    volumes:
+      - $PWD/python-server/:/usr/app/server/
+      - csv-share:/usr/app/server/csv/
+      
+  #-----------------------#
+  #        Logstash       #
+  #-----------------------#
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.2.0
+    container_name: logstash
+    environment:
+      - XPACK_MONITORING_ENABLED=false
+    volumes:
+      - $PWD/logstash/pipeline/:/usr/share/logstash/pipeline/
+      - csv-share:/usr/app/logstash/csv/
+
+  #-----------------------#
+  #   Kafka | Zookeeper   #
+  #-----------------------#
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    restart: on-failure
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  #-----------------------#
+  #    Kafka | Broker     #
+  #-----------------------#
+
+  broker:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: broker
+    restart: on-failure
+    ports:
+      - 9092:9092
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  #-----------------------#
+  #      Kafka | UI       #
+  #-----------------------#
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    restart: always
+    depends_on:
+      - zookeeper
+      - broker
+    ports:
+      - 8080:8080
+    environment:
+      KAFKA_CLUSTERS_0_NAME: keylogger-stats
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:9093
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+
+  #-----------------------#
+  #  Kafka | Topics Init  #
+  #-----------------------#
+
+  init-kafka:
+    image: confluentinc/cp-kafka:6.1.1
+    container_name: init-kafka-topics
+    depends_on:
+      - zookeeper
+      - broker
+      - kafka-ui
+    command: >
+      bash -c "kafka-topics --bootstrap-server broker:9093 --create --if-not-exists --topic logs --replication-factor 1 --partitions 1
+      && kafka-topics --bootstrap-server broker:9093 --create --if-not-exists --topic metadata --replication-factor 1 --partitions 1"
+  
+  #-----------------------#
+  #     Elasticsearch     #
+  #-----------------------#
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.0
+    container_name: elasticsearch
+    hostname: elasticsearch
+    volumes:
+      - es001-data:/usr/share/elasticsearch/data/
+    ports:
+      - 9200:9200
+    environment:
+      - node.name=es001
+      - discovery.type=single-node
+      - cluster.name=elasticsearch-cluster
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent localhost:9200/cluster/_health"]
+      interval: 30s
+      timeout: 30s
+      retries: 6
+
+  #-----------------------#
+  #        Kibana         #
+  #-----------------------#
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.2.0
+    container_name: kibana
+    hostname: kibana
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    ports:
+      - 5601:5601
+    volumes:
+      - kibana-data:/usr/share/kibana/data/
+      - $PWD/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    environment:
+      - SERVERNAME=kibana
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+
+  #-----------------------#
+  #    Spark Clusters     #
+  #-----------------------#
+
+  spark-logs:
+    container_name: spark-logs
+    restart: on-failure
+    build:
+      context: ./spark-logs/
+      dockerfile: Dockerfile
+    depends_on:
+      - zookeeper
+      - broker
+      - elasticsearch
+      - kibana
+
+  spark-metadata:
+    container_name: spark-metadata
+    restart: on-failure
+    build:
+      context: ./spark-metadata/
+      dockerfile: Dockerfile
+    depends_on:
+      - zookeeper
+      - broker
+      - elasticsearch
+      - kibana
+
+
+volumes:
+  csv-share:
+  es001-data:
+  kibana-data:
