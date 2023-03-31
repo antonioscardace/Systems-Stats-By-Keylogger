@@ -137,7 +137,7 @@ kibana | [http://localhost:5601/dashboards/list?...](http://localhost:5601/app/d
 
 ## License :copyright: 
 
-**Author**: [Antonio Scardace](https://antonioscardace.altervista.org/). <br/>
+**Author**: [Antonio Scardace](https://linktr.ee/antonioscardace). <br/>
 Distributed under the **GNU General Public License v3.0**. See ``` LICENSE ``` for more information.
 
 PLEASE USE AND READ IT FOR ACADEMIC PURPOSES ONLY. :bangbang: <br/>
