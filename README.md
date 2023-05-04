@@ -19,7 +19,7 @@ This project was created as an exam project, to test and practice the following 
 
 The project aims to make stats on the real-time use of the system by the users who use a product.
 
-It can be useful as:
+Three possible use cases are:
 1. System Monitor owned by **Operating Systems**' owners
 2. **Parental Control**
 3. **Spyware**
@@ -46,7 +46,7 @@ Each log is composed by:
 - **Timestamp of Start**: Indicates when the user started typing in that window.
 - **Logged Text**: Is the set of keys pressed by the user.
 - **Timestamp of End**: Indicates when the user finished typing in that window.
-- **IP Address**: Is the public IP address. If the PC has no connection, the default value is "Unknown".
+- **IP Address**: Is the PC's public IP address.
 
 For instance:
 ```
@@ -93,7 +93,7 @@ Component | Description
 <img src="docs/logos/python-logo.png" width="165px" /> | I have used it to implement a multi-threading server that receives real-time logs via TCP requests on the 8800 port from multiple clients. For each request, it extracts the features from the log, and saves all into two CSV files. <br/><br/> **metadata.csv** = [*UUID, Window Title, Timestamp of Begin, Timestamp of End, IP Address*] <br/> **logs.csv** = [*UUID, Logged Text*]
 <img src="docs/logos/logstash-logo.png" width="165px" /> | I have used **Logstash** to create two different dataflows: one for the metadata and one for the text logs. Logstash takes this input data from the two CSV files.
 <img src="docs/logos/kafka-logo.png" width="165px" /> | I have used **Apache Kafka** to make a single cluster, which has two topics: one for logs and one for metadata. It receives two different dataflows by Logstash and stores them to be pulled by Spark Streaming. Note that **Kafka Stream** has not been used.
-<img src="docs/logos/spark-logo.png" width="165px" /> | There are two Docker Containers - one for each Kafka Topic we need to read from. Both of them, after the processing, save the documents into the Elasticsearch index *keylogger_stats*. <br/><br/> In the first, **Spark Streaming** reads data from the _logs_ topic and adds a little set of features. Specifically, it is the VADER dictionary. <br/> In the second, **Spark Streaming** reads data from the _metadata_ topic and adds three features: the class label of the window, the difference (in seconds) between the two timestamps fields, and the public IP address geolocation coordinates (if it isn't set to "Unknown"). <br/>
+<img src="docs/logos/spark-logo.png" width="165px" /> | There are two Docker Containers - one for each Kafka Topic we need to read from. Both of them, after the processing, save the documents into the Elasticsearch index *keylogger_stats*. <br/><br/> In the first, **Spark Streaming** reads data from the _logs_ topic and adds a little set of features. Specifically, it is the VADER dictionary. <br/> In the second, **Spark Streaming** reads data from the _metadata_ topic and adds three features: the class label of the window, the difference (in seconds) between the two timestamps fields, and the public IP address geolocation coordinates. <br/>
 <img src="docs/logos/elasticsearch-logo.png" width="165px" /> | I have used **Elasticsearch** to create a cluster, containing the *keylogger_stats* index, shared only by a single node: *es001*. It receives docs from Spark Streaming. Data are saved into a Docker Volume to make the application persistent in time.
 <img src="docs/logos/kibana-logo.png" width="165px" /> | I have used **Kibana** to visualize some stats in real-time - I have set the dashboard auto-refresh to happen every second. The dashboard analyses just the data that arrived in the last 24 hours (you can change the time range). It shows general data (of all PCs) and if the user clicks on a specific UUID, the dashboard shows data of that specific PC.
 
