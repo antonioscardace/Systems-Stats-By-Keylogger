@@ -72,9 +72,7 @@ def process_batch(df, id):
     
         doc.update(get_delta_timestamps(doc['timestamp_begin'], doc['timestamp_end']))
         doc.update(get_window_classification(doc['window']))
-
-        if doc['ip_address'] != "Unknown":
-            doc.update(get_geo_ip_coords(doc['ip_address']))
+        doc.update(get_geo_ip_coords(doc['ip_address']))
 
         print(doc)
 
