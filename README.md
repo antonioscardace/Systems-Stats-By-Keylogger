@@ -15,7 +15,7 @@ This project was created as an exam project, to test and practice the following 
 * Knowledge of Data Storing via Elasticsearch
 * Knowledge of Data Visualization via Kibana
 
-## Real Use Case
+## Real Use Cases
 
 The project aims to make stats on the real-time use of the system by the users who use a product.
 
@@ -24,7 +24,7 @@ Three possible use cases are:
 2. **Parental Control**
 3. **Spyware**
 
-### Data Source: Keylogger
+## Data Source: Keylogger
 
 The data source is a Keylogger which sends logs to the **TCP** server probably on foreground window change.
 
@@ -60,7 +60,7 @@ For instance:
 }
 ```
 
-### Server System
+## Server System
 
 Receives logs (from multiple clients) and passes them to the pipeline illustrated below:
 <p align="center"> <img src="docs/images/pipeline.png" height="470px"/> </p>
@@ -81,7 +81,7 @@ The following functions are available for each user (personal stats) and for all
     + Customers Geolocation by IP :earth_americas:
     + Different stats about time spent writing to the PC :eyes:
 
-## Structure
+## Server Structure
 
 Let's see the structure of the project and how I have used all the components. <br/>
 Each component used in this project has been put inside a **Docker Container** :whale:
@@ -97,7 +97,7 @@ Component | Description
 <img src="docs/logos/elasticsearch-logo.png" width="165px" /> | I have used **Elasticsearch** to create a cluster, containing the *keylogger_stats* index, shared only by a single node: *es001*. It receives docs from Spark Streaming. Data are saved into a Docker Volume to make the application persistent in time.
 <img src="docs/logos/kibana-logo.png" width="165px" /> | I have used **Kibana** to visualize some stats in real-time - I have set the dashboard auto-refresh to happen every second. The dashboard analyses just the data that arrived in the last 24 hours (you can change the time range). It shows general data (of all PCs) and if the user clicks on a specific UUID, the dashboard shows data of that specific PC.
 
-## Demo
+## GUI Demo
 
 <img src="docs/snaps/kibana-0.png"/>
 <img src="docs/snaps/kibana-1.png"/>
