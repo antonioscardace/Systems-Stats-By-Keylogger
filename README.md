@@ -19,10 +19,9 @@ This project was created as an exam project, to test and practice the following 
 
 The project aims to make stats on the real-time use of the system by the users who use a product.
 
-Three possible use cases are:
+Two possible use cases are:
 1. System Monitor owned by **Operating Systems**' owners
-2. **Parental Control**
-3. **Spyware**
+2. **Spyware**
 
 ## Data Source: Keylogger
 
@@ -60,7 +59,7 @@ For instance:
 }
 ```
 
-## Server System
+## Server System Design
 
 Receives logs (from multiple clients) and passes them to the pipeline illustrated below:
 <p align="center"> <img src="docs/images/pipeline.png" height="470px"/> </p>
@@ -81,7 +80,7 @@ The following functions are available for each user (personal stats) and for all
     + Customers Geolocation by IP :earth_americas:
     + Different stats about time spent writing to the PC :eyes:
 
-## Server Structure
+## Server Components
 
 Let's see the structure of the project and how I have used all the components. <br/>
 Each component used in this project has been put inside a **Docker Container** :whale:
