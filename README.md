@@ -1,5 +1,5 @@
 # Systems-Stats-By-Keylogger
-_Project of Technologies for Advanced Programming_<br/>
+_Project for "Technologies for Advanced Programming" course_<br/>
 _Grade: 30 with honors / 30_<br/>
 _Antonio Scardace_ @ _Dept of Math and Computer Science, University of Catania_
 
