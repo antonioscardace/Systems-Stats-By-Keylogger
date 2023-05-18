@@ -17,7 +17,7 @@ services:
     volumes:
       - $PWD/python-server/:/usr/app/server/
       - csv-share:/usr/app/server/csv/
-      
+
   #-----------------------#
   #        Logstash       #
   #-----------------------#
@@ -96,7 +96,7 @@ services:
     command: >
       bash -c "kafka-topics --bootstrap-server broker:9093 --create --if-not-exists --topic logs --replication-factor 1 --partitions 1
       && kafka-topics --bootstrap-server broker:9093 --create --if-not-exists --topic metadata --replication-factor 1 --partitions 1"
-  
+
   #-----------------------#
   #     Elasticsearch     #
   #-----------------------#
