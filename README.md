@@ -17,7 +17,7 @@ This project was created as an exam project, to test and practice the following 
 
 ## Real Use Cases
 
-The project aims to make real-time stats on systems where a specific "product" is installed and used. The product sends precise stats obtained using a Keylogger. This keylogger may be a virus installed illegally or a service of the product legally accepted by the user. I can't know that.
+The project aims to make real-time stats about systems where a specific "product" is installed and used. The product sends precise stats obtained using a Keylogger. This keylogger may be a virus installed illegally or a service of the product legally accepted by the user. I can't know that.
 
 It has to be noticed that the stats are made on systems and not on the users who use them. Below you will see what the keylogger sends to the server, and you will not notice references to the user or device.
 
